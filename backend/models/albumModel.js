@@ -15,10 +15,12 @@ class Album {
 }
 
 
-  static async findAllByUser(userId) {
-    const result = await pool.query('SELECT * FROM albums WHERE user_id = $1', [userId]);
-    return result.rows;
-  }
+static async findAllByUser(userId) {
+  console.log("Récupération des albums pour l'utilisateur ID:", userId); // Ajout d'un log pour vérifier userId
+  const result = await pool.query('SELECT * FROM albums WHERE user_id = $1 AND deleted_at IS NULL', [userId]);
+  console.log("Albums trouvés:", result.rows); return result.rows;
+}
+
   static async delete(albumId) {
     const result = await pool.query(
       "UPDATE albums SET deleted_at = NOW() WHERE id = $1 RETURNING *",

@@ -22,16 +22,19 @@ exports.createAlbum = async (req, res) => {
 
 // Récupérer tous les albums de l'utilisateur
 exports.getAlbums = async (req, res) => {
-  const { userId } = req.user;
+  const { id: userId } = req.user; // Utilisation de `id` au lieu de `userId`
+  console.log("Utilisateur authentifié : ", req.user);  // Vérifie la structure de `req.user`
 
   try {
     const albums = await Album.findAllByUser(userId);
+    console.log("Albums trouvés : ", albums);  // Vérifie la réponse de la base de données
     res.status(200).json({ albums });
   } catch (err) {
     console.error('Erreur lors de la récupération des albums :', err);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };
+
 
 // Supprimer un album
 exports.deleteAlbum = async (req, res) => {
