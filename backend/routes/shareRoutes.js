@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/photo/:photoId', authMiddleware, sharePhoto);
 
 // ✅ Récupération d'un lien de partage
-router.get('/:shareUrl', getSharedContent);
+router.get('/:shareUrl', authMiddleware, getSharedContent);
 
 // ✅ Liste des liens partagés
 router.get('/list', authMiddleware, getSharedLinks);

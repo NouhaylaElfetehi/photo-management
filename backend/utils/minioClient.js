@@ -10,6 +10,21 @@ const minioClient = new Minio.Client({
   secretKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
 });
 
+const bucketName = process.env.MINIO_BUCKET;
+(async () => {
+    try {
+        const exists = await minioClient.bucketExists(bucketName);
+        if (!exists) {
+            await minioClient.makeBucket(bucketName, 'us-east-1');
+            console.log(`✅ Bucket "${bucketName}" créé`);
+        } else {
+            console.log(`✅ Bucket "${bucketName}" existe déjà`);
+        }
+    } catch (error) {
+        console.error('❌ Erreur MinIO :', error);
+    }
+})();
+
 // Vérifier la connexion
 minioClient.bucketExists('photomanagement', (err, exists) => {
   if (err) {

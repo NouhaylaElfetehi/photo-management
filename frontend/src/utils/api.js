@@ -41,6 +41,34 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+api.interceptors.response.use(
+  response => response,
+  async (error) => {
+    if (error.response && error.response.status === 401) {
+      console.warn("🔄 Token expiré, tentative de rafraîchissement...");
+
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (!refreshToken) {
+        console.error("❌ Aucun refresh token disponible !");
+        return Promise.reject(error);
+      }
+
+      try {
+        const res = await axios.post("http://localhost:5000/api/auth/refresh", { refreshToken });
+        const newToken = res.data.accessToken;
+
+        localStorage.setItem("token", newToken);
+        error.config.headers.Authorization = `Bearer ${newToken}`;
+        return axios(error.config);
+      } catch (refreshError) {
+        console.error("❌ Erreur lors du rafraîchissement du token :", refreshError);
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 
 

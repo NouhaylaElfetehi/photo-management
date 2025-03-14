@@ -5,14 +5,19 @@ const Album = require('../models/albumModel');
 // Récupérer les éléments supprimés
 exports.getTrashItems = async (req, res) => {
   const { userId } = req.user;
-
   try {
+    console.log("🔍 Récupération de la corbeille pour l'utilisateur :", userId);
+
     const photos = await Photo.findDeletedByUser(userId);
+    console.log("🗑️ Photos supprimées :", photos);
+
     const albums = await Album.findDeletedByUser(userId);
+    console.log("🗑️ Albums supprimés :", albums);
+
     res.status(200).json({ photos, albums });
   } catch (err) {
-    console.error('Erreur lors de la récupération de la corbeille :', err);
-    res.status(500).json({ message: 'Erreur serveur' });
+    console.error("❌ Erreur serveur `/api/trash` :", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
 };
 

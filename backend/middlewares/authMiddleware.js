@@ -31,17 +31,16 @@
 //       }
 //       return res.status(401).json({ message: "Erreur d'authentification" });
 //       }
-// };
+// };const jwt = require("jsonwebtoken");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
 const authMiddleware = async (req, res, next) => {
   console.log("🔍 Headers reçus :", req.headers);
 
-
-
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.warn("❌ Accès refusé, aucun token fourni !");
     return res.status(401).json({ message: "Accès non autorisé, token manquant" });
   }
 
@@ -53,24 +52,17 @@ const authMiddleware = async (req, res, next) => {
 
     const user = await User.findById(decoded.id);
     if (!user) {
+      console.warn("❌ Utilisateur introuvable !");
       return res.status(404).json({ message: "Utilisateur introuvable" });
     }
 
     req.user = user;
-    console.log("✅ Utilisateur authentifié :", user.email);
+    console.log("✅ Utilisateur authentifié :", req.user);
     next();
   } catch (error) {
+    console.error("❌ Erreur d'authentification :", error);
     return res.status(401).json({ message: "Erreur d'authentification" });
   }
 };
 
-
-
-const checkAdmin = (req, res, next) => {
-    if (!req.user || req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Accès refusé, admin requis' });
-    }
-    next();
-};
-
-module.exports = { authMiddleware, checkAdmin };
+module.exports = { authMiddleware };

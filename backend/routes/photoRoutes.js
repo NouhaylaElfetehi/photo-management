@@ -1,4 +1,6 @@
 const express = require('express');
+const minioClient = require('../utils/minioClient');
+
 const { uploadPhoto, searchPhotos, deletePhoto } = require('../controllers/photoController');
 const {authMiddleware} = require('../middlewares/authMiddleware');
 

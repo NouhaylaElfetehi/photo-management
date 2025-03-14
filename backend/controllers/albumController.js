@@ -5,14 +5,18 @@ const Photo = require('../models/photoModel');
 // Créer un album
 exports.createAlbum = async (req, res) => {
   const { name, description } = req.body;
-  const { userId } = req.user;
+  const userId = req.user?.id; // ✅ Vérification supplémentaire
+
+  if (!userId) {
+    return res.status(401).json({ message: "Utilisateur non authentifié" });
+  }
 
   try {
     const album = await Album.create({ userId, name, description });
-    res.status(201).json({ message: 'Album créé avec succès', album });
+    res.status(201).json({ message: "Album créé avec succès", album });
   } catch (err) {
-    console.error('Erreur lors de la création de l’album :', err);
-    res.status(500).json({ message: 'Erreur serveur' });
+    console.error("❌ Erreur lors de la création de l’album :", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
 };
 

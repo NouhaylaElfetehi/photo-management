@@ -1,12 +1,12 @@
 const express = require('express');
-const { register, login, googleAuth, githubAuth, refreshToken, getMe} = require('../controllers/authController');
+const { register, login, googleAuth, githubAuth, refreshToken, getMe, updateProfile} = require('../controllers/authController');
 
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const { authMiddleware } = require('../middlewares/authMiddleware'); // ✅ Ajout du middleware
 const jwt = require("jsonwebtoken");
 
-
+router.put('/update', authMiddleware, updateProfile);
 router.get('/me', authMiddleware, getMe);
 
 router.post('/register', [
